@@ -525,7 +525,7 @@ func TestUsageEventModelFilterOptionsReturnsStableModels(t *testing.T) {
 		t.Fatalf("expected model filters endpoint to ignore query filters, got %+v", provider.lastFilter)
 	}
 	body := resp.Body.String()
-	if body != `{"models":["claude-sonnet","gpt-5"]}` {
+		if body != `{"models":[{"value":"claude-sonnet","label":"claude-sonnet"},{"value":"gpt-5","label":"gpt-5"}]}` {
 		t.Fatalf("expected stable model filter options, got %s", body)
 	}
 }
