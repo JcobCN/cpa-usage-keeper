@@ -471,18 +471,18 @@ const getHeatmapCellColor = (intensity: number, isDark: boolean) => {
   const stops: Array<{ at: number; color: [number, number, number] }> = [
     ...(isDark
       ? [
-        { at: 0, color: [26, 24, 23] },
-        { at: 0.25, color: [55, 50, 47] },
-        { at: 0.5, color: [90, 83, 76] },
-        { at: 0.75, color: [130, 120, 112] },
-        { at: 1, color: [178, 170, 163] },
+        { at: 0, color: [26, 16, 8] },
+        { at: 0.25, color: [74, 28, 5] },
+        { at: 0.5, color: [160, 64, 10] },
+        { at: 0.75, color: [255, 123, 0] },
+        { at: 1, color: [255, 224, 102] },
       ] satisfies Array<{ at: number; color: [number, number, number] }>
       : [
-        { at: 0, color: [240, 238, 232] },
-        { at: 0.2, color: [206, 200, 192] },
-        { at: 0.45, color: [173, 165, 156] },
-        { at: 0.7, color: [139, 131, 124] },
-        { at: 1, color: [92, 82, 74] },
+        { at: 0, color: [255, 245, 235] },
+        { at: 0.25, color: [255, 216, 168] },
+        { at: 0.5, color: [255, 169, 77] },
+        { at: 0.75, color: [232, 89, 12] },
+        { at: 1, color: [92, 43, 14] },
       ] satisfies Array<{ at: number; color: [number, number, number] }>),
   ];
   const upperIndex = stops.findIndex((stop) => clampedIntensity <= stop.at);
@@ -496,9 +496,9 @@ const getHeatmapCellColor = (intensity: number, isDark: boolean) => {
 const getHeatmapCellTextColor = (intensity: number, isDark: boolean) => {
   const clampedIntensity = Math.max(0, Math.min(1, intensity));
   if (!isDark) {
-    return clampedIntensity > 0.58 ? '#f5f3ef' : '#3a3530';
+    return clampedIntensity > 0.55 ? '#fff8f0' : '#3d1f0a';
   }
-  return clampedIntensity > 0.75 ? '#1a1817' : '#f0eee8';
+  return clampedIntensity > 0.75 ? '#1c1208' : '#fff5eb';
 };
 
 const getHeatmapVisualIntensity = (value: number, maxValue: number) => {
@@ -1688,7 +1688,6 @@ function Heatmap({ cells, apiKeys, apiKeyLabels, models, loading, isDark }: { ce
                             style={{
                               background: getHeatmapCellColor(intensity, isDark),
                               color: getHeatmapCellTextColor(intensity, isDark),
-                              '--heatmap-flame-alpha': intensity.toFixed(3),
                             } as CSSProperties}
                             tabIndex={0}
                             aria-label={tooltipLines.join(', ')}
