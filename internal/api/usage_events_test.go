@@ -579,13 +579,21 @@ func TestUsageEventSpeedTPS(t *testing.T) {
 			},
 		},
 		{
-			name: "omits speed when only first visible token is present",
+			name: "omits speed when generation duration is too short",
 			row: servicedto.UsageEventRecord{
-				LatencyMS:       2045,
-				TTFTMS:          usageEventInt64Ptr(45),
-				OutputTokens:    4,
-				ReasoningTokens: 3,
+				LatencyMS:    54,
+				TTFTMS:       usageEventInt64Ptr(45),
+				OutputTokens: 100,
 			},
+		},
+		{
+			name: "includes speed when generation duration reaches threshold",
+			row: servicedto.UsageEventRecord{
+				LatencyMS:    55,
+				TTFTMS:       usageEventInt64Ptr(45),
+				OutputTokens: 100,
+			},
+			want: usageEventFloat64Ptr(9900),
 		},
 	}
 
