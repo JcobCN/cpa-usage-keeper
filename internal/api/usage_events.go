@@ -58,6 +58,7 @@ type usageEventPayload struct {
 	LatencyMS       int64                  `json:"latency_ms"`
 	TTFTMS          *int64                 `json:"ttft_ms,omitempty"`
 	SpeedTPS        *float64               `json:"speed_tps,omitempty"`
+	SpeedTotalTPS   *float64               `json:"speed_total_tps,omitempty"`
 	Tokens          usageEventTokenPayload `json:"tokens"`
 	CostUSD         float64                `json:"cost_usd"`
 	CostAvailable   bool                   `json:"cost_available"`
@@ -193,6 +194,7 @@ func buildUsageEventsPayload(rows []servicedto.UsageEventRecord, resolver usageI
 			LatencyMS:       row.LatencyMS,
 			TTFTMS:          row.TTFTMS,
 			SpeedTPS:        usageEventSpeedTPS(row),
+			SpeedTotalTPS:   usageEventSpeedTotalTPS(row),
 			CostUSD:         row.CostUSD,
 			CostAvailable:   row.CostAvailable,
 			PricingStyle:    strings.TrimSpace(row.PricingStyle),
@@ -221,6 +223,20 @@ func usageEventSpeedTPS(row servicedto.UsageEventRecord) *float64 {
 	}
 	// Speed 只衡量首字后可见输出 token 的平均生成速度，避免把等待首字的时间重复计入。
 	speed := float64(visibleOutputTokens-1) / (float64(row.LatencyMS-*row.TTFTMS) / 1000)
+	return &speed
+}
+
+// usageEventSpeedTotalTPS 计算包含 TTFT 在内的总耗时 TPS，更贴近用户体感。
+func usageEventSpeedTotalTPS(row servicedto.UsageEventRecord) *float64 {
+	visibleOutputTokens := row.OutputTokens - row.ReasoningTokens
+	if visibleOutputTokens < 0 {
+		visibleOutputTokens = 0
+	}
+	// 总耗时过短（<10ms）时，毫秒级精度无法支撑可信的 TPS 计算。
+	if row.LatencyMS < 10 || visibleOutputTokens <= 0 {
+		return nil
+	}
+	speed := float64(visibleOutputTokens) / (float64(row.LatencyMS) / 1000)
 	return &speed
 }
 

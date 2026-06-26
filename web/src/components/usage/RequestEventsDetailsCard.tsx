@@ -42,6 +42,7 @@ export const REQUEST_EVENT_COLUMN_IDS = [
   'ttft',
   'latency',
   'speed',
+  'speed_total',
   'input_tokens',
   'output_tokens',
   'reasoning_tokens',
@@ -123,6 +124,7 @@ type RequestEventRow = {
   latencyMs: number | null;
   ttftMs: number | null;
   speedTPS: number | null;
+  speedTotalTPS: number | null;
   inputTokens: number;
   outputTokens: number;
   reasoningTokens: number;
@@ -517,6 +519,7 @@ export function RequestEventsDetailsCard({
   });
   const ttftHint = t('usage_stats.ttft_hint');
   const speedHint = t('usage_stats.speed_hint');
+  const speedTotalHint = t('usage_stats.speed_total_hint');
 
   const rows = useMemo<RequestEventRow[]>(() => {
     return events.map((event, index) => {
@@ -544,6 +547,7 @@ export function RequestEventsDetailsCard({
       const latencyMs = Number.isFinite(event.latency_ms) ? event.latency_ms : null;
       const ttftMs = Number.isFinite(event.ttft_ms) ? event.ttft_ms as number : null;
       const speedTPS = Number.isFinite(event.speed_tps) ? event.speed_tps as number : null;
+      const speedTotalTPS = Number.isFinite(event.speed_total_tps) ? event.speed_total_tps as number : null;
       // 费用由后端按当前价格配置运行时计算，前端只负责展示可用/不可用状态。
       const costAvailable = event.cost_available === true;
       const cost = costAvailable ? Math.max(toNumber(event.cost_usd), 0) : null;
@@ -568,6 +572,7 @@ export function RequestEventsDetailsCard({
         latencyMs,
         ttftMs,
         speedTPS,
+        speedTotalTPS,
         inputTokens,
         outputTokens,
         reasoningTokens,
@@ -753,6 +758,12 @@ export function RequestEventsDetailsCard({
         label: t('usage_stats.speed'),
         header: <th className={styles.requestEventsNoWrapCell} title={speedHint}>{t('usage_stats.speed')}</th>,
         renderCell: (row) => <td className={styles.requestEventsNoWrapCell}>{formatSpeedTPS(row.speedTPS)}</td>,
+      },
+      {
+        id: 'speed_total',
+        label: t('usage_stats.speed_total'),
+        header: <th className={styles.requestEventsNoWrapCell} title={speedTotalHint}>{t('usage_stats.speed_total')}</th>,
+        renderCell: (row) => <td className={styles.requestEventsNoWrapCell}>{formatSpeedTPS(row.speedTotalTPS)}</td>,
       },
       {
         id: 'input_tokens',
