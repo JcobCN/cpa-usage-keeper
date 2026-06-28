@@ -814,7 +814,7 @@ export function RequestEventsDetailsCard({
     ];
 
     return definitions;
-  }, [latencyHint, speedHint, t, ttftHint]);
+  }, [latencyHint, speedHint, speedTotalHint, t, ttftHint]);
 
   const visibleColumns = useMemo(
     () => columnDefinitions.filter((definition) => effectiveVisibleColumnIdSet.has(definition.id)),

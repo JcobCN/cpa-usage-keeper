@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
 
-FROM node:22-alpine AS web-builder
+# web-builder: always build on native platform to avoid QEMU issues with npm/node
+FROM --platform=$BUILDPLATFORM node:22-alpine AS web-builder
 WORKDIR /app/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
